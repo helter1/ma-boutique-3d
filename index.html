@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="LAYER est un service d’impression 3D artisanal basé en Île-de-France. Précision professionnelle (0.2mm), devis gratuit et expédition sous 72h.">
+<title>LAYER — Impressions 3D sur mesure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e;
+    --bg2: #161616;
+    --bg3: #1e1e1e;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --accent: #f5a623;
+    --accent2: #e8920f;
+    --text: #f0ede6;
+    --muted: #888;
+    --muted2: #555;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  .mono { font-family: 'DM Mono', monospace; }
+  .label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+
+  /* GRID BACKGROUND */
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px;
+    background: rgba(14,14,14,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: 0.08em;
+    color: var(--text); text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; font-family: 'DM Mono', monospace; letter-spacing: 0.06em; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .cart-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--accent); color: #0e0e0e;
+    border: none; cursor: pointer;
+    padding: 8px 18px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.08em; transition: background 0.2s;
+  }
+  .cart-btn:hover { background: var(--accent2); }
+  .cart-count {
+    background: #0e0e0e; color: var(--accent);
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 500;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; padding: 100px 40px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -200px; right: -200px;
+    width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,166,35,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-tag { margin-bottom: 24px; }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 10vw, 130px);
+    line-height: 0.92; letter-spacing: 0.02em;
+    max-width: 900px;
+  }
+  .hero h1 .accent { color: var(--accent); display: block; }
+  .hero-sub {
+    margin: 28px 0 40px; color: var(--muted);
+    font-size: 16px; max-width: 480px; line-height: 1.7;
+  }
+  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent); color: #0e0e0e;
+    border: none; cursor: pointer;
+    padding: 14px 32px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+    letter-spacing: 0.1em; text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent; color: var(--text);
+    border: 0.5px solid var(--border2); cursor: pointer;
+    padding: 14px 32px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    letter-spacing: 0.1em; text-decoration: none;
+    transition: border-color 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+  /* SECTION */
+  section { padding: 96px 40px; }
+  .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 56px; }
+  .section-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 0.04em; }
+
+  /* ABOUT SECTION */
+  .about-content { max-width: 800px; font-size: 18px; color: var(--muted); }
+  .about-content strong { color: var(--text); }
+
+  /* PRODUCTS GRID */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 0.5px solid var(--border);
+  }
+  .product-card {
+    background: var(--bg2); padding: 28px;
+    cursor: pointer; transition: background 0.2s;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .product-card:hover { background: var(--bg3); }
+  .product-img {
+    aspect-ratio: 1; background: var(--bg3);
+    border-radius: 4px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px;
+    border: 0.5px solid var(--border);
+  }
+  .product-cat { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .product-name { font-size: 16px; font-weight: 500; line-height: 1.3; }
+  .product-desc { font-size: 13px; color: var(--muted); line-height: 1.6; flex: 1; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; color: var(--accent); }
+  .product-price.devis { font-size: 13px; color: var(--muted); }
+  .add-cart-btn {
+    background: transparent; border: 0.5px solid var(--border2); color: var(--text);
+    padding: 8px 16px; border-radius: 3px; cursor: pointer;
+    font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .add-cart-btn:hover { background: var(--accent); color: #0e0e0e; border-color: var(--accent); }
+
+  /* HOW IT WORKS */
+  .hiw { background: var(--bg2); }
+  .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0; background: var(--border); border: 0.5px solid var(--border); }
+  .step { background: var(--bg2); padding: 36px 32px; border-right: 0.5px solid var(--border); }
+  .step:last-child { border-right: none; }
+  .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 64px; color: var(--border2); line-height: 1; margin-bottom: 16px; }
+  .step h3 { font-size: 15px; font-weight: 500; margin-bottom: 10px; }
+  .step p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .step-icon { font-size: 28px; margin-bottom: 12px; }
+
+  /* FORM */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  form { display: flex; flex-direction: column; gap: 16px; }
+  .field-group { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field label { display: block; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .field input, .field select, .field textarea {
+    width: 100%; background: var(--bg2); border: 0.5px solid var(--border2);
+    color: var(--text); padding: 12px 14px; border-radius: 3px;
+    font-family: 'Inter', sans-serif; font-size: 14px; outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+  .form-submit {
+    width: 100%; background: var(--accent); color: #0e0e0e;
+    border: none; cursor: pointer; padding: 16px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  /* FOOTER */
+  footer { background: var(--bg); border-top: 0.5px solid var(--border); padding: 48px 40px 32px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+  .footer-brand h3 { font-family: 'Bebas Neue', sans-serif; font-size: 32px; margin-bottom: 10px; }
+  .footer-brand h3 span { color: var(--accent); }
+
+  /* NOTIFICATION */
+  .notif {
+    position: fixed; bottom: 32px; right: 32px; z-index: 3000;
+    background: var(--bg3); border: 0.5px solid var(--accent);
+    padding: 14px 20px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent);
+    transform: translateY(20px); opacity: 0; transition: all 0.3s ease;
+  }
+  .notif.show { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    section { padding: 72px 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body class="grid-bg">
+
+<nav>
+  <a href="#" class="nav-logo">LAY<span>ER</span></a>
+  <ul class="nav-links">
+    <li><a href="#catalogue">Catalogue</a></li>
+    <li><a href="#apropos">À propos</a></li>
+    <li><a href="#processus">Processus</a></li>
+    <li><a href="#commande">Commande</a></li>
+  </ul>
+  <button class="cart-btn" onclick="openCart()">
+    <span>Panier</span>
+    <span class="cart-count" id="cart-count">0</span>
+  </button>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag"><span class="label">Impressions 3D — fait à la demande</span></div>
+  <h1>CRÉEZ<br>L'IM<span class="accent">POSSIBLE</span></h1>
+  <p class="hero-sub">Figurines, décorations, pièces techniques ou prototypes — chaque commande est imprimée avec soin sur une Bambu Lab P2S.</p>
+  <div class="hero-ctas">
+    <a href="#catalogue" class="btn-primary">Voir le catalogue</a>
+    <a href="#commande" class="btn-outline">Commande sur mesure</a>
+  </div>
+</section>
+
+<section id="apropos" style="background: var(--bg2);">
+  <div class="section-header">
+    <div><div class="label" style="margin-bottom:12px">— Notre expertise</div><h2>À PROPOS</h2></div>
+  </div>
+  <div class="about-content">
+    <p><strong>LAYER</strong> est un service d’impression 3D artisanal basé en <strong>Île-de-France</strong>. Que vous cherchiez une pièce technique, un prototype ou un objet de décoration personnalisé, nous donnons vie à vos fichiers 3D avec une <strong>précision professionnelle (0.2mm)</strong>.</p>
+    <br>
+    <p>Choisissez parmi notre catalogue ou demandez un devis gratuit. Expédition rapide en <strong>72h</strong> partout en France.</p>
+  </div>
+</section>
+
+<section id="catalogue">
+  <div class="section-header">
+    <div><div class="label" style="margin-bottom:12px">— Catalogue</div><h2>NOS IMPRESSIONS</h2></div>
+  </div>
+  <div class="products-grid" id="products-grid"></div>
+</section>
+
+<section class="hiw" id="processus">
+  <div class="section-header">
+    <div><div class="label" style="margin-bottom:12px">— Processus</div><h2>COMMENT ÇA MARCHE</h2></div>
+  </div>
+  <div class="steps-grid">
+    <div class="step"><div class="step-num">01</div><h3>Choisissez ou envoyez</h3><p>Sélectionnez un modèle ou envoyez votre fichier STL.</p></div>
+    <div class="step"><div class="step-num">02</div><h3>Couleur & matière</h3><p>PLA, PETG, ABS ou TPU flexible en 16 coloris.</p></div>
+    <div class="step"><div class="step-num">03</div><h3>Impression</h3><p>Votre pièce est imprimée et vérifiée avec soin.</p></div>
+    <div class="step"><div class="step-num">04</div><h3>Livraison</h3><p>Expédié sous 72h ou remise en main propre (91/77).</p></div>
+  </div>
+</section>
+
+<section id="commande" style="border-top: 0.5px solid var(--border);">
+  <div class="section-header">
+    <div><div class="label" style="margin-bottom:12px">— Sur mesure</div><h2>VOTRE COMMANDE</h2></div>
+  </div>
+  <div class="form-grid">
+    <div style="color:var(--muted)"><h3>Un projet spécifique ?</h3><p>Envoyez-moi les détails et je vous réponds sous 24h avec un devis gratuit.</p></div>
+    <form id="order-form">
+      <div class="field"><label>Email</label><input type="email" placeholder="votre@email.com" required></div>
+      <div class="field"><label>Détails</label><textarea placeholder="Dimensions, couleur, usage..."></textarea></div>
+      <button type="submit" class="form-submit">Envoyer ma demande →</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><h3>LAY<span>ER</span></h3><p>Impressions 3D artisanales. Qualité pro, prix juste.</p></div>
+    <div class="footer-col"><h4>Contact</h4><ul><li><a href="mailto:contact@layer-3d.fr">contact@layer-3d.fr</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>© 2025 LAYER — Impressions 3D</p></div>
+</footer>
+
+<div class="notif" id="notif"></div>
+
+<script>
+const products = [
+  { id: 1, cat: 'Figurines', name: 'Dragon Articulé', desc: 'Dragon articulé en PLA, env. 12cm.', price: 22, emoji: '🐉' },
+  { id: 2, cat: 'Décoration', name: 'Vase Géométrique', desc: 'Vase design impression mode.', price: 14, emoji: '🏺' },
+  { id: 3, cat: 'Gaming', name: 'Support manette', desc: 'Support mural universel.', price: 8, emoji: '🎮' },
+  { id: 6, cat: 'Prototypes', name: 'Pièce technique', desc: 'Sur devis uniquement.', price: null, emoji: '⚙️' },
+];
+
+function renderProducts() {
+  const grid = document.getElementById('products-grid');
+  grid.innerHTML = products.map(p => `
+    <div class="product-card">
+      <div class="product-img">${p.emoji}</div>
+      <div class="product-cat">${p.cat}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-desc">${p.desc}</div>
+      <div class="product-footer">
+        <div class="product-price">${p.price ? p.price + ',00 €' : 'Sur devis'}</div>
+        <button class="add-cart-btn" onclick="showNotif('Ajouté !')">+ Ajouter</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showNotif(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+renderProducts();
+</script>
+</body>
+</html>
