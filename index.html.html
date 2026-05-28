@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LAYER — Impressions 3D sur mesure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e;
+    --bg2: #161616;
+    --bg3: #1e1e1e;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --accent: #f5a623;
+    --accent2: #e8920f;
+    --text: #f0ede6;
+    --muted: #888;
+    --muted2: #555;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  .mono { font-family: 'DM Mono', monospace; }
+  .label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+
+  /* GRID BACKGROUND */
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px;
+    background: rgba(14,14,14,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: 0.08em;
+    color: var(--text); text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; font-family: 'DM Mono', monospace; letter-spacing: 0.06em; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .cart-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--accent); color: #0e0e0e;
+    border: none; cursor: pointer;
+    padding: 8px 18px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.08em; transition: background 0.2s;
+  }
+  .cart-btn:hover { background: var(--accent2); }
+  .cart-count {
+    background: #0e0e0e; color: var(--accent);
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 500;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; padding: 100px 40px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -200px; right: -200px;
+    width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,166,35,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-tag { margin-bottom: 24px; }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 10vw, 130px);
+    line-height: 0.92; letter-spacing: 0.02em;
+    max-width: 900px;
+  }
+  .hero h1 .accent { color: var(--accent); display: block; }
+  .hero-sub {
+    margin: 28px 0 40px; color: var(--muted);
+    font-size: 16px; max-width: 480px; line-height: 1.7;
+  }
+  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent); color: #0e0e0e;
+    border: none; cursor: pointer;
+    padding: 14px 32px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+    letter-spacing: 0.1em; text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent; color: var(--text);
+    border: 0.5px solid var(--border2); cursor: pointer;
+    padding: 14px 32px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    letter-spacing: 0.1em; text-decoration: none;
+    transition: border-color 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+  /* STATS BAR */
+  .stats-bar {
+    background: var(--bg2); border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border);
+    display: flex; gap: 0;
+  }
+  .stat { 
+    flex: 1; padding: 28px 32px;
+    border-right: 0.5px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px; color: var(--accent); line-height: 1;
+  }
+  .stat-desc { font-size: 12px; color: var(--muted); margin-top: 4px; font-family: 'DM Mono', monospace; letter-spacing: 0.06em; }
+
+  /* SECTION */
+  section { padding: 96px 40px; }
+  .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 56px; }
+  .section-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 0.04em; }
+
+  /* PRODUCTS GRID */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 0.5px solid var(--border);
+  }
+  .product-card {
+    background: var(--bg2); padding: 28px;
+    cursor: pointer; transition: background 0.2s;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .product-card:hover { background: var(--bg3); }
+  .product-img {
+    aspect-ratio: 1; background: var(--bg3);
+    border-radius: 4px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px;
+    border: 0.5px solid var(--border);
+  }
+  .product-cat { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+  .product-name { font-size: 16px; font-weight: 500; line-height: 1.3; }
+  .product-desc { font-size: 13px; color: var(--muted); line-height: 1.6; flex: 1; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; color: var(--accent); }
+  .product-price.devis { font-size: 13px; color: var(--muted); }
+  .add-cart-btn {
+    background: transparent; border: 0.5px solid var(--border2); color: var(--text);
+    padding: 8px 16px; border-radius: 3px; cursor: pointer;
+    font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.08em;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .add-cart-btn:hover { background: var(--accent); color: #0e0e0e; border-color: var(--accent); }
+  .add-cart-btn.added { background: var(--accent); color: #0e0e0e; border-color: var(--accent); }
+
+  /* FILAMENT BADGE */
+  .filament-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .fbadge {
+    width: 14px; height: 14px; border-radius: 50%;
+    display: inline-block; border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  /* HOW IT WORKS */
+  .hiw { background: var(--bg2); }
+  .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0; background: var(--border); border: 0.5px solid var(--border); }
+  .step { background: var(--bg2); padding: 36px 32px; border-right: 0.5px solid var(--border); }
+  .step:last-child { border-right: none; }
+  .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 64px; color: var(--border2); line-height: 1; margin-bottom: 16px; }
+  .step h3 { font-size: 15px; font-weight: 500; margin-bottom: 10px; }
+  .step p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .step-icon { font-size: 28px; margin-bottom: 12px; }
+
+  /* CUSTOM ORDER / FORM */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .form-info h3 { font-family: 'Bebas Neue', sans-serif; font-size: 36px; margin-bottom: 16px; }
+  .form-info p { color: var(--muted); font-size: 14px; line-height: 1.8; margin-bottom: 24px; }
+  .perks { display: flex; flex-direction: column; gap: 12px; }
+  .perk { display: flex; gap: 12px; align-items: flex-start; font-size: 13px; color: var(--muted); }
+  .perk-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+  form { display: flex; flex-direction: column; gap: 16px; }
+  .field-group { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field label { display: block; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .field input, .field select, .field textarea {
+    width: 100%; background: var(--bg2); border: 0.5px solid var(--border2);
+    color: var(--text); padding: 12px 14px; border-radius: 3px;
+    font-family: 'Inter', sans-serif; font-size: 14px;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+  .field select option { background: var(--bg2); }
+  .field textarea { resize: vertical; min-height: 110px; }
+  .form-submit {
+    width: 100%; background: var(--accent); color: #0e0e0e;
+    border: none; cursor: pointer;
+    padding: 16px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    transition: background 0.2s;
+  }
+  .form-submit:hover { background: var(--accent2); }
+  .success-msg {
+    display: none; background: rgba(26,200,100,0.08); border: 0.5px solid rgba(26,200,100,0.3);
+    color: #4ade80; padding: 14px 18px; border-radius: 4px;
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    text-align: center;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--bg); border-top: 0.5px solid var(--border);
+    padding: 48px 40px 32px;
+  }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+  .footer-brand h3 { font-family: 'Bebas Neue', sans-serif; font-size: 32px; margin-bottom: 10px; }
+  .footer-brand h3 span { color: var(--accent); }
+  .footer-brand p { color: var(--muted); font-size: 13px; line-height: 1.7; max-width: 280px; }
+  .footer-col h4 { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col ul a { color: var(--muted); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+  .footer-col ul a:hover { color: var(--text); }
+  .footer-bottom { border-top: 0.5px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-bottom p { color: var(--muted2); font-size: 12px; font-family: 'DM Mono', monospace; }
+
+  /* CART MODAL */
+  .cart-overlay {
+    display: none; position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.7);
+  }
+  .cart-overlay.open { display: block; }
+  .cart-drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; width: 380px;
+    background: var(--bg2); border-left: 0.5px solid var(--border);
+    display: flex; flex-direction: column;
+    transform: translateX(100%); transition: transform 0.3s ease;
+  }
+  .cart-overlay.open .cart-drawer { transform: translateX(0); }
+  .cart-header { display: flex; align-items: center; justify-content: space-between; padding: 24px; border-bottom: 0.5px solid var(--border); }
+  .cart-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 0.06em; }
+  .close-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 22px; line-height: 1; }
+  .cart-items { flex: 1; overflow-y: auto; padding: 16px 24px; }
+  .cart-empty { text-align: center; color: var(--muted); font-size: 13px; font-family: 'DM Mono', monospace; margin-top: 48px; }
+  .cart-item { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 0.5px solid var(--border); }
+  .cart-item-img { font-size: 28px; width: 48px; height: 48px; background: var(--bg3); border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .cart-item-price { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent); }
+  .cart-item-remove { background: none; border: none; color: var(--muted2); cursor: pointer; font-size: 18px; transition: color 0.2s; }
+  .cart-item-remove:hover { color: #ef4444; }
+  .cart-footer { padding: 24px; border-top: 0.5px solid var(--border); }
+  .cart-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .cart-total span { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); }
+  .cart-total strong { font-family: 'DM Mono', monospace; font-size: 20px; color: var(--accent); }
+  .checkout-btn { width: 100%; background: var(--accent); color: #0e0e0e; border: none; cursor: pointer; padding: 14px; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; transition: background 0.2s; }
+  .checkout-btn:hover { background: var(--accent2); }
+
+  /* NOTIFICATION */
+  .notif {
+    position: fixed; bottom: 32px; right: 32px; z-index: 3000;
+    background: var(--bg3); border: 0.5px solid var(--accent);
+    padding: 14px 20px; border-radius: 4px; min-width: 220px;
+    font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent);
+    transform: translateY(20px); opacity: 0;
+    transition: all 0.3s ease; pointer-events: none;
+  }
+  .notif.show { transform: translateY(0); opacity: 1; }
+
+  /* MATERIAL SECTION */
+  .materials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--border); border: 0.5px solid var(--border); }
+  .mat-card { background: var(--bg2); padding: 24px; text-align: center; }
+  .mat-swatch { width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 12px; }
+  .mat-name { font-weight: 500; font-size: 13px; margin-bottom: 4px; }
+  .mat-type { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    section { padding: 72px 20px; }
+    .hero { padding: 100px 20px 60px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    .field-group { grid-template-columns: 1fr; }
+    .stats-bar { flex-direction: column; }
+    .stat { border-right: none; border-bottom: 0.5px solid var(--border); }
+  }
+</style>
+</head>
+<body class="grid-bg">
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">LAY<span>ER</span></a>
+  <ul class="nav-links">
+    <li><a href="#catalogue">Catalogue</a></li>
+    <li><a href="#processus">Processus</a></li>
+    <li><a href="#materiaux">Matériaux</a></li>
+    <li><a href="#commande">Commande</a></li>
+  </ul>
+  <button class="cart-btn" onclick="openCart()">
+    <span>Panier</span>
+    <span class="cart-count" id="cart-count">0</span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">
+    <span class="label">Impressions 3D — fait à la demande</span>
+  </div>
+  <h1>
+    CRÉEZ<br>L'IM<span class="accent">POSSIBLE</span>
+  </h1>
+  <p class="hero-sub">
+    Figurines, décorations, pièces techniques ou prototypes — chaque commande est imprimée avec soin, couche par couche, sur une Bambu Lab P2S.
+  </p>
+  <div class="hero-ctas">
+    <a href="#catalogue" class="btn-primary">Voir le catalogue</a>
+    <a href="#commande" class="btn-outline">Commande sur mesure</a>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">0.2mm</div>
+    <div class="stat-desc">Précision de couche</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">16</div>
+    <div class="stat-desc">Couleurs disponibles</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">72h</div>
+    <div class="stat-desc">Délai moyen</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">100%</div>
+    <div class="stat-desc">Satisfaction garantie</div>
+  </div>
+</div>
+
+<!-- CATALOGUE -->
+<section id="catalogue">
+  <div class="section-header">
+    <div>
+      <div class="label" style="margin-bottom:12px">— Catalogue</div>
+      <h2>NOS IMPRESSIONS</h2>
+    </div>
+    <span style="font-size:13px;color:var(--muted);font-family:'DM Mono',monospace">8 produits disponibles</span>
+  </div>
+
+  <div class="products-grid" id="products-grid">
+    <!-- Products injected by JS -->
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="hiw" id="processus">
+  <div class="section-header">
+    <div>
+      <div class="label" style="margin-bottom:12px">— Processus</div>
+      <h2>COMMENT ÇA MARCHE</h2>
+    </div>
+  </div>
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-icon">📦</div>
+      <h3>Choisissez ou envoyez</h3>
+      <p>Sélectionnez un modèle dans le catalogue ou envoyez-nous votre fichier STL / référence.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-icon">🎨</div>
+      <h3>Couleur & matière</h3>
+      <p>Choisissez parmi 16 coloris et plusieurs matériaux : PLA, PETG, ABS, TPU flexible.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-icon">⚙️</div>
+      <h3>Impression & contrôle</h3>
+      <p>Votre pièce est imprimée, vérifiée, nettoyée et photographiée avant envoi.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-icon">🚚</div>
+      <h3>Livraison rapide</h3>
+      <p>Expédié sous 72h via Colissimo. Remise en main propre possible en région parisienne.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MATÉRIAUX -->
+<section id="materiaux">
+  <div class="section-header">
+    <div>
+      <div class="label" style="margin-bottom:12px">— Filaments</div>
+      <h2>MATÉRIAUX</h2>
+    </div>
+  </div>
+  <div class="materials-grid">
+    <div class="mat-card">
+      <div class="mat-swatch" style="background: linear-gradient(135deg,#f0f0f0,#c0c0c0); border: 1px solid rgba(255,255,255,0.1)"></div>
+      <div class="mat-name">PLA</div>
+      <div class="mat-type">Standard</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-swatch" style="background: linear-gradient(135deg,#a8d8ff,#5fa8e8); border: 1px solid rgba(255,255,255,0.1)"></div>
+      <div class="mat-name">PETG</div>
+      <div class="mat-type">Résistant</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-swatch" style="background: linear-gradient(135deg,#e8e8e8,#888); border: 1px solid rgba(255,255,255,0.1)"></div>
+      <div class="mat-name">ABS</div>
+      <div class="mat-type">Haute temp.</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-swatch" style="background: linear-gradient(135deg,#ffe878,#f5a623); border: 1px solid rgba(255,255,255,0.1)"></div>
+      <div class="mat-name">PLA Silk</div>
+      <div class="mat-type">Brillant</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-swatch" style="background: linear-gradient(135deg,#ffa97a,#e05a1a); border: 1px solid rgba(255,255,255,0.1)"></div>
+      <div class="mat-name">TPU</div>
+      <div class="mat-type">Flexible</div>
+    </div>
+    <div class="mat-card">
+      <div class="mat-swatch" style="background: linear-gradient(135deg,#a8f0d0,#2ecc71); border: 1px solid rgba(255,255,255,0.1)"></div>
+      <div class="mat-name">PLA+</div>
+      <div class="mat-type">Renforcé</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMANDE SUR MESURE -->
+<section id="commande" style="background: var(--bg2); border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border);">
+  <div class="section-header">
+    <div>
+      <div class="label" style="margin-bottom:12px">— Sur mesure</div>
+      <h2>VOTRE COMMANDE</h2>
+    </div>
+  </div>
+  <div class="form-grid">
+    <div class="form-info">
+      <h3>Vous avez un projet en tête ?</h3>
+      <p>Que ce soit un modèle standard du catalogue, une pièce custom, un prototype d'étudiant ou un cadeau original — envoyez-moi les détails et je vous réponds sous 24h avec un devis.</p>
+      <div class="perks">
+        <div class="perk"><div class="perk-dot"></div><span>Fichiers STL, OBJ, et STEP acceptés</span></div>
+        <div class="perk"><div class="perk-dot"></div><span>Devis gratuit et sans engagement</span></div>
+        <div class="perk"><div class="perk-dot"></div><span>Remise possible pour commandes multiples</span></div>
+        <div class="perk"><div class="perk-dot"></div><span>Post-traitement & peinture disponibles sur demande</span></div>
+        <div class="perk"><div class="perk-dot"></div><span>Livraison Île-de-France ou expédition France entière</span></div>
+      </div>
+    </div>
+    <div>
+      <form id="order-form">
+        <div class="field-group">
+          <div class="field">
+            <label>Prénom</label>
+            <input type="text" placeholder="Lucas" required>
+          </div>
+          <div class="field">
+            <label>Nom</label>
+            <input type="text" placeholder="Dupont" required>
+          </div>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" placeholder="lucas@email.com" required>
+        </div>
+        <div class="field-group">
+          <div class="field">
+            <label>Type de commande</label>
+            <select>
+              <option>Catalogue — standard</option>
+              <option>Fichier personnel (STL/OBJ)</option>
+              <option>Prototype / maquette</option>
+              <option>Figurine / déco</option>
+              <option>Pièce technique</option>
+              <option>Autre</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Matière souhaitée</label>
+            <select>
+              <option>PLA (recommandé)</option>
+              <option>PETG</option>
+              <option>ABS</option>
+              <option>PLA Silk</option>
+              <option>TPU Flexible</option>
+              <option>Pas de préférence</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Détails du projet</label>
+          <textarea placeholder="Décrivez votre projet : dimensions, couleur, quantité, délai souhaité, usage prévu..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Envoyer ma demande →</button>
+        <div class="success-msg" id="success-msg">✓ Demande envoyée ! Je vous réponds sous 24h.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>LAY<span>ER</span></h3>
+      <p>Impressions 3D artisanales réalisées avec une Bambu Lab P2S. Qualité professionnelle, délais courts, au prix juste.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="#catalogue">Catalogue</a></li>
+        <li><a href="#processus">Comment ça marche</a></li>
+        <li><a href="#materiaux">Matériaux</a></li>
+        <li><a href="#commande">Devis / Commande</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:quantin.husson1@gmail.com">quantin.husson1@gmail.com</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Île-de-France</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 LAYER — Impressions 3D</p>
+    <p class="mono" style="font-size:11px;color:var(--muted2)">Bambu Lab P2S · 0.2mm layers · Île-de-France</p>
+  </div>
+</footer>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCartIfOutside(event)">
+  <div class="cart-drawer">
+    <div class="cart-header">
+      <h3>PANIER</h3>
+      <button class="close-btn" onclick="closeCart()">×</button>
+    </div>
+    <div class="cart-items" id="cart-items">
+      <p class="cart-empty">Votre panier est vide.</p>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total</span>
+        <strong id="cart-total">0,00 €</strong>
+      </div>
+      <button class="checkout-btn" onclick="checkout()">Commander →</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<script>
+const products = [
+  { id: 1, cat: 'Figurines', name: 'Figurine Fantasy — Dragon', desc: 'Dragon articulé en PLA, env. 12cm. Finitions soignées, support optimisé.', price: 22, emoji: '🐉', colors: ['#c0392b','#27ae60','#1a1a1a'] },
+  { id: 2, cat: 'Décoration', name: 'Vase Géométrique', desc: 'Vase en forme de polyèdre, impression vase mode. Plusieurs coloris disponibles.', price: 14, emoji: '🏺', colors: ['#e8e8e8','#f5a623','#5b2c6f'] },
+  { id: 3, cat: 'Gaming', name: 'Support manette universel', desc: 'Support mural pour manettes PS5, Xbox ou Switch. Fixation vis incluse.', price: 8, emoji: '🎮', colors: ['#1a1a1a','#e8e8e8'] },
+  { id: 4, cat: 'Figurines', name: 'Mini buste personnalisé', desc: 'Buste 5cm à partir de votre photo. Délai 5 jours ouvrés.', price: null, emoji: '🧑', colors: ['#f0c080','#c8a060'] },
+  { id: 5, cat: 'Accessoires', name: 'Porte-clés personnalisé', desc: 'Porte-clés avec votre texte, initiales ou logo. Durable en PETG.', price: 5, emoji: '🔑', colors: ['#f5a623','#e8e8e8','#c0392b','#27ae60','#1a6ee8'] },
+  { id: 6, cat: 'Prototypes', name: 'Pièce technique sur devis', desc: 'Engrenages, supports, boîtiers, maquettes architecturales. Envoyez votre STL.', price: null, emoji: '⚙️', colors: ['#888','#ccc'] },
+  { id: 7, cat: 'Décoration', name: 'Lampe lithophanie', desc: 'Diffuse votre photo en lumière. Base LED incluse. Impression en PLA naturel.', price: 28, emoji: '🔆', colors: ['#f0f0e8'] },
+  { id: 8, cat: 'Gaming', name: 'Dice Tower RPG', desc: 'Tour à dés pour jeux de rôle, design gothique. Livré démonté.', price: 18, emoji: '🎲', colors: ['#1a1a1a','#8b0000','#4a4a4a'] },
+];
+
+let cart = [];
+
+function renderProducts() {
+  const grid = document.getElementById('products-grid');
+  grid.innerHTML = products.map(p => `
+    <div class="product-card">
+      <div class="product-img">${p.emoji}</div>
+      <div>
+        <div class="product-cat">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+      </div>
+      <div class="product-desc">${p.desc}</div>
+      <div class="filament-badges">${p.colors.map(c => `<span class="fbadge" style="background:${c}" title="${c}"></span>`).join('')}</div>
+      <div class="product-footer">
+        <div class="${p.price ? 'product-price' : 'product-price devis'}">${p.price ? p.price.toFixed(2).replace('.',',') + ' €' : 'Sur devis'}</div>
+        ${p.price 
+          ? `<button class="add-cart-btn" id="btn-${p.id}" onclick="addToCart(${p.id})">+ Ajouter</button>` 
+          : `<a href="#commande" class="add-cart-btn">Demander →</a>`}
+      </div>
+    </div>
+  `).join('');
+}
+
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  if (!product || !product.price) return;
+  const existing = cart.find(i => i.id === id);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ ...product, qty: 1 });
+  }
+  updateCartUI();
+  showNotif(`✓ ${product.name} ajouté au panier`);
+  const btn = document.getElementById(`btn-${id}`);
+  if (btn) { btn.textContent = '✓ Ajouté'; btn.classList.add('added'); setTimeout(() => { btn.textContent = '+ Ajouter'; btn.classList.remove('added'); }, 1800); }
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateCartUI();
+}
+
+function updateCartUI() {
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cart-count').textContent = count;
+  document.getElementById('cart-total').textContent = total.toFixed(2).replace('.', ',') + ' €';
+  const itemsEl = document.getElementById('cart-items');
+  if (cart.length === 0) {
+    itemsEl.innerHTML = '<p class="cart-empty">Votre panier est vide.</p>';
+  } else {
+    itemsEl.innerHTML = cart.map(i => `
+      <div class="cart-item">
+        <div class="cart-item-img">${i.emoji}</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${i.name} ${i.qty > 1 ? '×' + i.qty : ''}</div>
+          <div class="cart-item-price">${(i.price * i.qty).toFixed(2).replace('.', ',')} €</div>
+        </div>
+        <button class="cart-item-remove" onclick="removeFromCart(${i.id})">×</button>
+      </div>
+    `).join('');
+  }
+}
+
+function openCart() {
+  document.getElementById('cart-overlay').classList.add('open');
+}
+
+function closeCart() {
+  document.getElementById('cart-overlay').classList.remove('open');
+}
+
+function closeCartIfOutside(e) {
+  if (e.target === document.getElementById('cart-overlay')) closeCart();
+}
+
+function checkout() {
+  if (cart.length === 0) { showNotif('Votre panier est vide !'); return; }
+  closeCart();
+  document.getElementById('commande').scrollIntoView({ behavior: 'smooth' });
+  showNotif('Remplissez le formulaire pour finaliser 📋');
+}
+
+function showNotif(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+document.getElementById('order-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const msg = document.getElementById('success-msg');
+  msg.style.display = 'block';
+  this.reset();
+  cart = [];
+  updateCartUI();
+  setTimeout(() => { msg.style.display = 'none'; }, 5000);
+});
+
+renderProducts();
+</script>
+</body>
+</html>
